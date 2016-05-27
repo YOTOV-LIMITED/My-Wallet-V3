@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>My-wallet-v3 by YOTOV-LIMITED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">My-wallet-v3</h1>
+      <h2 class="project-tagline"></h2>
+      <a href="https://github.com/YOTOV-LIMITED/My-Wallet-V3" class="btn">View on GitHub</a>
+      <a href="https://github.com/YOTOV-LIMITED/My-Wallet-V3/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/YOTOV-LIMITED/My-Wallet-V3/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="mywallet--" class="anchor" href="#mywallet--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MyWallet <a href="https://travis-ci.org/blockchain/My-Wallet-V3"><img src="https://travis-ci.org/blockchain/My-Wallet-V3.png?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/blockchain/My-Wallet-V3?branch=master"><img src="https://coveralls.io/repos/blockchain/My-Wallet-V3/badge.svg?branch=master&amp;service=github" alt="Coverage Status"></a>
+</h1>
+
+<p>JavaScript Model for Blockchain.info wallet.</p>
+
+<h2>
+<a id="build" class="anchor" href="#build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build</h2>
+
+<div class="highlight highlight-source-shell"><pre>npm install
+grunt build</pre></div>
+
+<h2>
+<a id="tests" class="anchor" href="#tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tests</h2>
+
+<div class="highlight highlight-source-shell"><pre>npm <span class="pl-c1">test</span></pre></div>
+
+<h2>
+<a id="dev" class="anchor" href="#dev" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dev</h2>
+
+<p>Watch files and re-build</p>
+
+<div class="highlight highlight-source-shell"><pre>grunt</pre></div>
+
+<h2>
+<a id="clean" class="anchor" href="#clean" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Clean</h2>
+
+<p>Clean generated files:</p>
+
+<div class="highlight highlight-source-shell"><pre>grunt clean</pre></div>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Load <code>dist/my-wallet.js</code>.</p>
+
+<p>Optional: set alias for modules you use</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> MyWallet <span class="pl-k">=</span> <span class="pl-smi">Blockchain</span>.<span class="pl-smi">MyWallet</span>;
+<span class="pl-k">var</span> WalletStore <span class="pl-k">=</span> <span class="pl-smi">Blockchain</span>.<span class="pl-smi">WalletStore</span>;
+<span class="pl-k">var</span> Spender <span class="pl-k">=</span> <span class="pl-smi">Blockchain</span>.<span class="pl-smi">Spender</span>;
+<span class="pl-k">var</span> <span class="pl-c1">API</span> <span class="pl-k">=</span> <span class="pl-smi">Blockchain</span>.<span class="pl-c1">API</span>;</pre></div>
+
+<p>Disable logout, if desired, for development work:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">MyWallet</span>.<span class="pl-en">disableLogout</span>(<span class="pl-c1">true</span>);
+
+<span class="pl-c">// Set an interval, since logout gets reactived by certain parts of the code</span>
+<span class="pl-c1">window</span>.<span class="pl-en">setInterval</span>(<span class="pl-k">function</span>() { <span class="pl-smi">MyWallet</span>.<span class="pl-en">disableLogout</span>(<span class="pl-c1">true</span>); }, <span class="pl-c1">60000</span>);</pre></div>
+
+<p>My Wallet communicates about its state with user-defined event listeners. Setup a listener like so:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-en">myListenerFun</span>(<span class="pl-smi">eventName</span>, <span class="pl-smi">data</span>) {
+    <span class="pl-c">// Handle events</span>
+}
+
+<span class="pl-c">// Register listener function with MyWallet</span>
+<span class="pl-smi">MyWallet</span>.<span class="pl-en">addEventListener</span>(myListenerFun);</pre></div>
+
+<p>Some events that we need to process:</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Event Name</th>
+<th align="left">Our Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>did_multiaddr</code></td>
+<td align="left">Populate wallet statistics on the UI</td>
+</tr>
+<tr>
+<td align="left"><code>hd_wallets_does_not_exist</code></td>
+<td align="left">Create an HD wallet</td>
+</tr>
+<tr>
+<td align="left"><code>on_wallet_decrypt_finish</code></td>
+<td align="left">Get wallet transaction history</td>
+</tr>
+</tbody>
+</table>
+
+<p>To build an HD wallet with an existing legacy wallet, we must initialize after receiving event notification from MyWallet.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> passphrase <span class="pl-k">=</span> <span class="pl-smi">MyWallet</span>.<span class="pl-en">generateHDWalletPassphrase</span>();
+
+<span class="pl-smi">MyWallet</span>.<span class="pl-en">initializeHDWallet</span>(passphrase, <span class="pl-c1">null</span>, <span class="pl-c1">null</span>, _successFun, _errorFun);</pre></div>
+
+<p>Load a wallet from the server, with no 2FA</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> guid <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>my-wallet-guid-1234-bcde<span class="pl-pds">"</span></span>;
+<span class="pl-k">var</span> pass <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>wallet-password<span class="pl-pds">"</span></span>;
+<span class="pl-k">var</span> twoFactorCode <span class="pl-k">=</span> <span class="pl-c1">null</span>;
+
+<span class="pl-smi">MyWallet</span>.<span class="pl-en">fetchWalletJSON</span>(guid, <span class="pl-c1">null</span>, <span class="pl-c1">null</span>, pass, twoFactorCode,
+    successFun, need2FAfun, wrong2FAfun, otherErrorFun);
+
+<span class="pl-c">// Do stuff with the wallet</span>
+<span class="pl-k">var</span> LegacyAddresses <span class="pl-k">=</span> <span class="pl-smi">MyWallet</span>.<span class="pl-en">getLegacyActiveAddresses</span>();</pre></div>
+
+<p>In order to fetch the wallet history, make a call to <code>get_history</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">MyWallet</span>.<span class="pl-en">get_history</span>(_successFun, _errorFun);</pre></div>
+
+<p><code>get_history</code> will trigger the <code>did_multiaddr</code> event on completion, so the wallet stats and display can be updated.</p>
+
+<h2>
+<a id="distribution" class="anchor" href="#distribution" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Distribution</h2>
+
+<p>Run <code>GITHUB_USER=... GITHUB_PASSWORD=... grunt dist</code> to check all dependencies against <code>dependency-whitelist.json</code> and generate <code>my-wallet.min.js</code>`.</p>
+
+<p>If package.json contains a version like "1.2.<em>", the latest version is 1.2.3, but the latest whitelisted version is 1.2.2 then it will use 1.2.2 and show a warning. This also applies to dependencies! Even if you specificy a package version like 1.2.</em>, if that package depends on an another package and specifies a specific version that's not whitelist, the script will abort.</p>
+
+<h2>
+<a id="adding-a-browserified-dependency" class="anchor" href="#adding-a-browserified-dependency" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding a browserified dependency</h2>
+
+<ol>
+<li><code>npm install newpackage --save</code></li>
+<li>Add the require where needed</li>
+<li><code>npm install</code></li>
+</ol>
+
+<h3>
+<a id="whitelist-dependencies" class="anchor" href="#whitelist-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Whitelist dependencies</h3>
+
+<ol>
+<li>Add the tagged version and the commit hash to dependency-whitelist.json.</li>
+<li>Run <code>grunt dist</code>
+</li>
+</ol>
+
+<h2>
+<a id="security" class="anchor" href="#security" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Security</h2>
+
+<p>Security issues can be reported to us in the following venues:</p>
+
+<ul>
+<li>Email: <a href="mailto:security@blockchain.info">security@blockchain.info</a>
+</li>
+<li>Bug Bounty: <a href="https://www.crowdcurity.com/blockchain-info">https://www.crowdcurity.com/blockchain-info</a>
+</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/YOTOV-LIMITED/My-Wallet-V3">My-wallet-v3</a> is maintained by <a href="https://github.com/YOTOV-LIMITED">YOTOV-LIMITED</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
